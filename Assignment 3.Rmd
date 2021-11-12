@@ -1,0 +1,65 @@
+---
+title: "Assignment 3"
+author: "Megha"
+date: "11/9/2021"
+output: pdf_document
+---
+## Introduction
+For this assignment, I will be looking at Hospital data to plot the 30 day
+mortality rates for heart attack, finding the best hospital in the state, 
+ranking hospitals by outcome in a state, and finally ranking hospitals in all 
+states. 
+
+Source: The data from this assignment comes from the [Hospital Compare web site](https://www.cms.gov/Medicare/Quality-Initiatives-Patient-Assessment-Instruments/HospitalQualityInits/HospitalCompare). This website provides data and
+information about the quality of care at over 4,000 Medicare-certified hospitals
+in the U.S. This dataset essentially covers all major U.S. hospitals.
+
+The files I will be using from this dataset are:
+
+* **outcome-of-care-measures.csv**: Contains information about 30-day mortality and readmission rates
+for heart attacks, heart failure, and pneumonia for over 4,000 hospitals.
+* **hospital-data.csv**: Contains information about each hospital.
+
+## Working with the Data
+
+```{r}
+## reading data into R
+outcome <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
+hosp <- read.csv("hospital-data.csv", colClasses = "character")
+
+## looking at the data
+head(outcome)
+head(hosp)
+names(outcome) ## to determine column names
+
+## Plotting the 30 - day mortality rates for heart attack - from column 11
+outcome[, 11] <- as.numeric(outcome[, 11])
+hist(outcome[, 11],xlab = "Days", ylab = "Mortality Rate", main = "30 Day Mortality Rates for Heart Attack")
+```
+Next, I'm going to find the best hospital in a state by writing a function that takes two arguments and returns the best (or lowest)30-day mortality for the specified outcome.
+```{r}
+source("best.R")
+## Sample Outputs:
+best("TX", "heart attack")
+best("TX", "heart failure")
+best("MD", "heart attack")
+best("MD", "pneumonia")
+best("PR","pneumonia")
+```
+Next, I will write a function that returns the name of the hospital in a specified state based on a ranking system for a given outcome. 
+
+```{r}
+source("rankhospital.R")
+#Sample outputs
+rankhospital("TX", "heart failure", 4)
+rankhospital("MD", "heart attack", "worst")
+rankhospital("MN", "heart attack", 5000)
+```
+Finally, I will write a function that returns the name of a hospital from each state based on a specified rank and outcome. 
+```{r}
+source("rankall.R") 
+head(rankall("heart attack", 20), 10)
+tail(rankall("pneumonia", "worst"), 3)
+tail(rankall("heart failure"), 10)
+```
+
